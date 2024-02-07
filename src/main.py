@@ -1,4 +1,5 @@
 from Scraper import Goodreads_Scraper
+from Database import Database
 
 
 if __name__ == "__main__":
@@ -33,4 +34,21 @@ if __name__ == "__main__":
     print(f"I have read {len(book_data)} books!!!")
     # Gathered Titles and Authors into a list of tuples.
     # Add rest of data, then push to database
+    server = "jasons-entertainment.database.windows.net"
+    database = "MyEntertainment"
+    user = "Jason"
+    password = "Jabberw0cky"
+    entertainment_db = Database(server, database, user, password)
+    entertainment_db.connect()
+    entertainment_db.create_cursor()
+    for title, author in book_data:
+        # Need to remove any apostrophes or INSERT won't work
+        title = title.replace("'", "")
+        author = author.replace("'", "")
+        insert_command = f"INSERT INTO dbo.Books(Title, AuthorName) VALUES (\'{title}\', \'{author}\');"
+        entertainment_db.execute_command(insert_command)
+    entertainment_db.close_connection()
+    print("Books entered into database successfully")
+        
+        
     
